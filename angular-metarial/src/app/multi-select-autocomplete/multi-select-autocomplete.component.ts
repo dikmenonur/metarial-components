@@ -1,8 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup } from '@angular/forms';
-import { Subject } from 'rxjs';
-import { Observable } from 'rxjs/internal/Observable';
-import { of } from 'rxjs/internal/observable/of';
+import { Subject, of,Observable } from 'rxjs';
 import { debounceTime, exhaustMap, scan, startWith, switchMap, takeWhile, tap } from 'rxjs/operators';
 import { AutoCompleteEntity } from '../models/auto-complete-entity';
 import { forIn, orderBy } from 'lodash';
@@ -83,8 +81,6 @@ export class MultiSelectAutocompleteComponent implements OnInit {
 	};
 
 	getChangedValOfInput(_debounceTime:number) {
-debugger
-
 		const filter$ = this.formControl.valueChanges.pipe(
 			startWith(""),
 			debounceTime(_debounceTime)
@@ -95,6 +91,7 @@ debugger
 		);
 		return filter$;
 	}
+
 	ngOnInit() {
 
 		this.dataInitPage(300);
@@ -152,8 +149,7 @@ debugger
 	}
 
 	private _filter(entityValue: string, page: number): Observable<AutoCompleteEntity[]> {
-
-		const take = 10;
+		const take = 20;
 		const skip = page > 0 ? (page - 1) * take : 0;
 		let filterData = this.optionsData;
 		if (typeof entityValue == 'string') {
