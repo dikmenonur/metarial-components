@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/internal/Observable';
 import { of } from 'rxjs/internal/observable/of';
 import { debounceTime, exhaustMap, scan, startWith, switchMap, takeWhile, tap } from 'rxjs/operators';
 import { AutoCompleteEntity } from '../models/auto-complete-entity';
-
+import { forIn, orderBy } from 'lodash';
 @Component({
   selector: 'app-multi-select-autocomplete',
   templateUrl: './multi-select-autocomplete.component.html',
@@ -13,15 +13,15 @@ import { AutoCompleteEntity } from '../models/auto-complete-entity';
 })
 export class MultiSelectAutocompleteComponent implements OnInit {
 
-  private nextPage$ = new Subject();
+  	private nextPage$ = new Subject();
 	@Input() currentFromGroup: FormGroup;
-	dataSourceData: Observable<Array<AutoCompleteEntity>>=new Observable<Array<AutoCompleteEntity>>();
-	@Input() dataOptionsData: Array<AutoCompleteEntity> = new Array<AutoCompleteEntity>();
+	dataSourceData: Observable<Array<AutoCompleteEntity>> = new Observable<Array<AutoCompleteEntity>>();
+	@Input() optionsData: Array<AutoCompleteEntity> = new Array<AutoCompleteEntity>();
 	@Output() selectedDealer: AutoCompleteEntity[] = new Array<AutoCompleteEntity>();
 	@Output() unSelectedDealer: AutoCompleteEntity[] = new Array<AutoCompleteEntity>();
-
-	isLoading = false;
 	@Output() result = new EventEmitter<{ key: string, data: Array<AutoCompleteEntity> }>();
+	@Input() reloadData= false;
+	isLoading = false;
 	key: string = "";
 	constructor(private change: ChangeDetectorRef) {
     this.currentFromGroup= new FormGroup({
@@ -29,7 +29,7 @@ export class MultiSelectAutocompleteComponent implements OnInit {
     });
 	}
 
-	displayFnArray(autoEntity: AutoCompleteEntity[] | string): string | undefined {
+	displayFnArray(autoEntity: AutoCompleteEntity[] | string): string  {
 		let displayValue='';
     if (Array.isArray(autoEntity)) {
 			autoEntity.forEach((auto, index) => {
@@ -83,6 +83,8 @@ export class MultiSelectAutocompleteComponent implements OnInit {
 	};
 
 	getChangedValOfInput(_debounceTime:number) {
+debugger
+
 		const filter$ = this.formControl.valueChanges.pipe(
 			startWith(""),
 			debounceTime(_debounceTime)
@@ -125,14 +127,13 @@ export class MultiSelectAutocompleteComponent implements OnInit {
 					scan((allAutoData, newData) => {
 
 						for (var i = 0; i < newData.length; i++) {
-							let currentDealer = newData[i];
-
-							let indexC = allAutoData.findIndex(t => t.name == currentDealer.name);
+							let currentData = newData[i];
+							let indexC = allAutoData.findIndex(t => t.name == currentData.name);
 
 							if (indexC > -1) {
-								allAutoData[indexC] = currentDealer;
+								allAutoData[indexC] = currentData;
 							} else {
-								allAutoData.push(currentDealer);
+								allAutoData.push(currentData);
 							}
 
 							if (allAutoData.filter(t => t.selected).length > 0) {
@@ -150,23 +151,23 @@ export class MultiSelectAutocompleteComponent implements OnInit {
 		);
 	}
 
-	private _filter(dealerName: string, page: number): Observable<AutoCompleteEntity[]> {
+	private _filter(entityValue: string, page: number): Observable<AutoCompleteEntity[]> {
+
 		const take = 10;
 		const skip = page > 0 ? (page - 1) * take : 0;
-		let filterData = this.dataOptionsData;
-		if (typeof dealerName == 'string') {
-			filterData = this.dataOptionsData.filter(option => option.name.indexOf(dealerName) >= 0);
-			filterData = this.dataOptionsData.filter(option => option.title.toLocaleUpperCase().indexOf(dealerName.toLocaleUpperCase()) >= 0);
-			filterData = filterData.length !== 0 ? filterData : this.dataOptionsData.filter(option => option.name.indexOf(dealerName) >= 0);
-		} else if (typeof dealerName == 'object') {
-			filterData = this.dataOptionsData.filter(option => option == dealerName);
+		let filterData = this.optionsData;
+		if (typeof entityValue == 'string') {
+			filterData = this.optionsData.filter(option => option.name.toLowerCase().includes(entityValue.toLowerCase()));
+			filterData = filterData.length !== 0 ? filterData : this.optionsData.filter(option => option.title.toLowerCase().includes(entityValue.toLowerCase()));
+		} else if (typeof entityValue == 'object') {
+			filterData = this.optionsData.filter(option => option == entityValue);
 		}
 
 		return of(filterData.slice(skip, skip + take));
 	}
 
 	onScroll() {
-		this.nextPage$.next();
+		this.nextPage$.next;
 	}
 
 	ngOnChanges() {
