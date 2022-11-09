@@ -1,0 +1,39 @@
+<!--<div class="chip-list-wrapper">
+	<mat-chip-list #chipList>
+		<ng-container *ngFor="let option of selectedDealer">
+			<mat-chip class="cardinal-colors" (click)="removeChip(option)">
+				{{option.customerId}}
+				<mat-icon class="mat-chip-remove">cancel</mat-icon>
+			</mat-chip>
+		</ng-container>
+	</mat-chip-list>
+</div>-->
+<mat-form-field class="round" [formGroup]="currentFromGroup">
+	<input matInput placeholder="Arama"
+		   aria-label="State"
+		   [matAutocomplete]="auto"
+		   [formControlName]="formName">
+
+	<button type="button"
+			mat-button
+			matSuffix
+			mat-icon-button
+			aria-label="Clear"
+			(click)="matAutoCompleteClear()">
+		<mat-icon>cancel</mat-icon>
+	</button>
+</mat-form-field>
+
+<mat-autocomplete #auto="matAutocomplete"
+				  [displayWith]="displayFnArray"
+				  (optionsScroll)="onScroll()">
+	<mat-option *ngFor="let option of dataSourceData | async">
+		<div (click)="optionClicked($event, option)">
+			<mat-checkbox [checked]="option.selected"
+						  (change)="toggleSelection(option)"
+						  (click)="$event.stopPropagation()">
+				<span><b>{{option.name}}</b> ({{option.title}})</span>
+			</mat-checkbox>
+		</div>
+	</mat-option>
+</mat-autocomplete>
