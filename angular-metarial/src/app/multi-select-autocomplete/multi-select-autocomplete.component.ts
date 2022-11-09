@@ -157,8 +157,9 @@ debugger
 		const skip = page > 0 ? (page - 1) * take : 0;
 		let filterData = this.optionsData;
 		if (typeof entityValue == 'string') {
-			filterData = this.optionsData.filter(option => option.name.toLowerCase().includes(entityValue.toLowerCase()));
-			filterData = filterData.length !== 0 ? filterData : this.optionsData.filter(option => option.title.toLowerCase().includes(entityValue.toLowerCase()));
+			filterData = this.optionsData.filter(option => option.name.toLocaleLowerCase().includes(entityValue.toLocaleLowerCase()));
+			filterData = filterData.length !== 0 ? filterData : this.optionsData.filter(option => option.title.toLocaleLowerCase().includes(entityValue.toLocaleLowerCase()));
+			filterData = filterData.length !== 0 ? filterData : this.optionsData.filter(option => option.id.toLocaleLowerCase().includes(entityValue.toLocaleLowerCase()));
 		} else if (typeof entityValue == 'object') {
 			filterData = this.optionsData.filter(option => option == entityValue);
 		}

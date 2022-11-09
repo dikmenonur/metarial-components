@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AutoCompleteEntity } from './models/auto-complete-entity';
-import * as Data from '../app/dummy/user_generated.json'
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -18,11 +18,16 @@ constructor(){
   
 }
   ngOnInit(): void {
-    let jsonData= JSON.parse(JSON.stringify(Data));
-    for (let index = 0; index < jsonData.length; index++) {
-      const element = jsonData[index];
-      this.dataOptionsData.push(element);
-    }  
+    let entity=new AutoCompleteEntity(1,'Onur','Dikmen',false);
+    let entity2=new AutoCompleteEntity(2,'Veli','Raman',false);
+    let entity3=new AutoCompleteEntity(3,'Deli','Sagman',false);
+    let entity4=new AutoCompleteEntity(4,'Keli','Tekilmen',false);
+
+    this.dataOptionsData.push(entity);
+    this.dataOptionsData.push(entity2);
+    this.dataOptionsData.push(entity3);
+    this.dataOptionsData.push(entity4);
+
   }
 
  
